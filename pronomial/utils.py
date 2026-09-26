@@ -17,7 +17,7 @@ def pos_tag(text, lang="en"):
         return pos_tag_pt(text)
     if lang.startswith("es"):
         return pos_tag_es(text)
-    if lang.startswith("pt"):
+    if lang.startswith("ca"):
         return pos_tag_ca(text)
     raise NotImplementedError
 
