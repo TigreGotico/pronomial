@@ -37,15 +37,40 @@ GENDERED_WORDS_EN = {
 }
 
 
+def strip_possessive_en(token: str) -> str:
+    """Return the noun inside an English possessive token.
+
+    quebra_frases keeps a possessive whole, so "man's" arrives as one token.
+    The tagger reads that as JJ and the noun stops being a candidate
+    antecedent; a name keeps its clitic and reaches the gender classifier as
+    "Mary's", which matches nothing. Both want the bare noun.
+    """
+    for clitic in ("'s", "\u2019s", "s'", "s\u2019"):
+        if len(token) > len(clitic) and token.endswith(clitic):
+            return token[:-len(clitic)] + ("s" if clitic[0] == "s" else "")
+    return token
+
+
 def pos_tag_en(tokens):
     if isinstance(tokens, str):
         tokens = word_tokenize(tokens)
 
+    # Tag the noun inside a possessive, and report it in place of the token.
+    # Callers index by position, so the list length must not change.
+    tokens = [strip_possessive_en(t) for t in tokens]
+
     try:
         postagged = nltk.pos_tag(tokens)
     except LookupError:
-        nltk.download("averaged_perceptron_tagger")
-        return pos_tag_en(tokens)
+        # nltk 3.8.2 renamed the English tagger resource to
+        # averaged_perceptron_tagger_eng. Downloading only the old name left
+        # the lookup failing, and the fallback called itself again on every
+        # call: the result was RecursionError, not a missing-data message.
+        # Download both names, then retry once and let a second failure raise.
+        for resource in ("averaged_perceptron_tagger_eng",
+                         "averaged_perceptron_tagger"):
+            nltk.download(resource, quiet=True)
+        postagged = nltk.pos_tag(tokens)
 
     # HACK this fixes some know failures from postag
     # this is not sustainable but important cases can be added at any time
