@@ -44,8 +44,15 @@ def pos_tag_en(tokens):
     try:
         postagged = nltk.pos_tag(tokens)
     except LookupError:
-        nltk.download("averaged_perceptron_tagger")
-        return pos_tag_en(tokens)
+        # nltk 3.8.2 renamed the English tagger resource to
+        # averaged_perceptron_tagger_eng. Downloading only the old name left
+        # the lookup failing, and the fallback called itself again on every
+        # call: the result was RecursionError, not a missing-data message.
+        # Download both names, then retry once and let a second failure raise.
+        for resource in ("averaged_perceptron_tagger_eng",
+                         "averaged_perceptron_tagger"):
+            nltk.download(resource, quiet=True)
+        postagged = nltk.pos_tag(tokens)
 
     # HACK this fixes some know failures from postag
     # this is not sustainable but important cases can be added at any time

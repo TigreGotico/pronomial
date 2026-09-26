@@ -34,8 +34,8 @@ class TestCorefEN(unittest.TestCase):
                 "City manager Gary Johnson dedicated their equalising goal "
                 "in the match to Janet, who had sent a message of support to her teammates."),
             "Janet has a husband , Bob , and one son , Sam . "
-            "A second child was stillborn in November 2009 , causing Janet "
-            "to miss Bristol City ' s match against Nottingham Forest . "
+            "A second child was stillborn in November 2009, causing Janet "
+            "to miss Bristol City's match against Nottingham Forest . "
             "City manager Gary Johnson dedicated their equalising goal in the match to Janet , "
             "Janet had sent a message of support to Janet teammates .")
 
@@ -44,7 +44,7 @@ class TestCorefEN(unittest.TestCase):
             replace_corefs("Jack is one of the top candidates in "
                            "the elections. His ideas are unique compared to "
                            "Bob's."),
-            "Jack is one of the top candidates in the elections . Jack ideas are unique compared to Bob ' s ."
+            "Jack is one of the top candidates in the elections . Jack ideas are unique compared to Bob's ."
         )
         self.assertEqual(
             replace_corefs("I voted for Elon because he is clear about his "
@@ -95,12 +95,12 @@ class TestCorefEN(unittest.TestCase):
         # dog -> neutral
         self.assertEqual(
             replace_corefs("dog is man's best friend. It is always loyal."),
-            "dog is man ' s best friend . dog is always loyal ."
+            "dog is man's best friend . dog is always loyal ."
         )
         # Dog -> name (male)
         self.assertEqual(
             replace_corefs("Dog is man's best friend. It is always loyal."),
-            "Dog is man ' s best friend . Dog is always loyal ."
+            "Dog is man's best friend . Dog is always loyal ."
         )
         self.assertEqual(
             replace_corefs("is the light turned on? turn it off"),
@@ -170,8 +170,8 @@ class TestCorefEN(unittest.TestCase):
                 "Around the same time, Lisa's son Tom had returned from Vietnam with a drug habit. One night, Michael caught Tom breaking into his office to steal drugs"
             ),
             "A short while later , Michael decided that Michael wanted to "
-            "play a role in Michael son ' s life , and tried to get Lisa to marry Michael , but by this time , Lisa wanted nothing to do with Michael . "
-            "Around the same time , Lisa ' s son Tom had returned from "
+            "play a role in Michael son's life , and tried to get Lisa to marry Michael , but by this time , Lisa wanted nothing to do with Michael . "
+            "Around the same time , Lisa's son Tom had returned from "
             "Vietnam with a drug habit . One night , Michael caught Tom breaking into Michael office to steal drugs"
         )
 
@@ -281,8 +281,8 @@ class TestCorefEN(unittest.TestCase):
                 "City manager Gary Johnson dedicated their equalising goal "
                 "in the match to Janet, who had sent a message of support to her teammates."),
             "Janet has a husband , Sproule , and one son , Sam . "
-            "A second child was stillborn in November 2009 , causing Janet "
-            "to miss Bristol City ' s match against Nottingham Forest . "
+            "A second child was stillborn in November 2009, causing Janet "
+            "to miss Bristol City's match against Nottingham Forest . "
             "City manager Gary Johnson dedicated their equalising goal in the match to Janet , "
             "Janet had sent a message of support to Janet teammates .")
 
@@ -293,8 +293,8 @@ class TestCorefEN(unittest.TestCase):
                 "A second child was stillborn in November 2009, causing him to miss Bristol City's match against Nottingham Forest. "
                 "City manager Gary Johnson dedicated their equalising goal in the match to Sproule, who had sent a message of support to his teammates."),
             "Sproule has a wife , Janet , and one son , Sam . "
-            "A second child was stillborn in November 2009 , causing Sam to "
-            "miss Bristol City ' s match against Nottingham Forest . "
+            "A second child was stillborn in November 2009, causing Sam to "
+            "miss Bristol City's match against Nottingham Forest . "
             "City manager Gary Johnson dedicated their equalising goal in the match to Sproule , Sproule had sent a message of support to Johnson teammates .")
         #  "... causing Sproule to miss ... to Sproule teammates"
 
