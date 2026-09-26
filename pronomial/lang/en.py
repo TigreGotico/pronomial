@@ -1,5 +1,4 @@
 import nltk
-from quebra_frases import word_tokenize
 
 PRONOUNS_EN = {
     'male': ['he', 'him', 'himself', 'his'],
@@ -60,7 +59,10 @@ def _download_en_tagger():
 
 def pos_tag_en(tokens):
     if isinstance(tokens, str):
-        tokens = word_tokenize(tokens)
+        # Imported here: pronomial.utils imports this module, and the English
+        # tokenizer lives there beside the other language dispatches.
+        from pronomial.utils import word_tokenize
+        tokens = word_tokenize(tokens, lang="en")
 
     try:
         postagged = nltk.pos_tag(tokens)

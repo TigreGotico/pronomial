@@ -133,7 +133,7 @@ class PronomialCoreferenceSolver:
                     prev_names_idx["subject"].append(idx)
 
         if isinstance(sentence, str):
-            tokens = word_tokenize(sentence)
+            tokens = word_tokenize(sentence, lang=lang)
         else:
             tokens = sentence
 
@@ -288,7 +288,7 @@ class PronomialCoreferenceSolver:
 
     @staticmethod
     def solve_corefs(sentence, lang="en", return_idx=True):
-        tokens = word_tokenize(sentence)
+        tokens = word_tokenize(sentence, lang=lang)
         candidates = PronomialCoreferenceSolver.score_corefs(sentence, lang)
         corefs = []
         for tok_id, match in candidates.items():
@@ -304,14 +304,14 @@ class PronomialCoreferenceSolver:
 
     @classmethod
     def replace_corefs(cls, text, lang="en"):
-        tokens = word_tokenize(text)
+        tokens = word_tokenize(text, lang=lang)
         for tok_id, mtok_id, score in cls.solve_corefs(text, lang=lang):
             tokens[tok_id] = tokens[mtok_id]
         return " ".join(tokens)
 
     @staticmethod
-    def normalize(text):
-        return " ".join(word_tokenize(text))
+    def normalize(text, lang="en"):
+        return " ".join(word_tokenize(text, lang=lang))
 
 
 def normalize(*args, **kwargs):
