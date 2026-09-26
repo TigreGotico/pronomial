@@ -37,9 +37,27 @@ GENDERED_WORDS_EN = {
 }
 
 
+def strip_possessive_en(token: str) -> str:
+    """Return the noun inside an English possessive token.
+
+    quebra_frases keeps a possessive whole, so "man's" arrives as one token.
+    The tagger reads that as JJ and the noun stops being a candidate
+    antecedent; a name keeps its clitic and reaches the gender classifier as
+    "Mary's", which matches nothing. Both want the bare noun.
+    """
+    for clitic in ("'s", "\u2019s", "s'", "s\u2019"):
+        if len(token) > len(clitic) and token.endswith(clitic):
+            return token[:-len(clitic)] + ("s" if clitic[0] == "s" else "")
+    return token
+
+
 def pos_tag_en(tokens):
     if isinstance(tokens, str):
         tokens = word_tokenize(tokens)
+
+    # Tag the noun inside a possessive, and report it in place of the token.
+    # Callers index by position, so the list length must not change.
+    tokens = [strip_possessive_en(t) for t in tokens]
 
     try:
         postagged = nltk.pos_tag(tokens)

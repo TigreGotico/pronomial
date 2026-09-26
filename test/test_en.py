@@ -1,5 +1,6 @@
 import unittest
 from pronomial import replace_corefs, detect_nouns, score_corefs, word_tokenize
+from pronomial.lang.en import strip_possessive_en
 
 
 class TestCorefEN(unittest.TestCase):
@@ -329,7 +330,11 @@ class TestCorefEN(unittest.TestCase):
         # friendly we are comparing actual words, note that in practice we
         # should work with token indexes
         def test_prediction(sentence, expected):
-            tokens = word_tokenize(sentence)
+            # The solver works in token indexes; this maps them back to words
+            # so the gold below reads as language. A possessive arrives as one
+            # token ("man's"), and the candidate the solver holds is the noun
+            # inside it, so the same strip is applied here.
+            tokens = [strip_possessive_en(t) for t in word_tokenize(sentence)]
             pred = score_corefs(sentence, lang="en")
             matches = []
             for tok_idx, match in pred.items():
@@ -440,7 +445,7 @@ class TestCorefEN(unittest.TestCase):
              ('him', 'Lisa', 0.07),
              ('him', 'time', 0.19),
              ('him', 'nothing', 0.09),
-             ('his', 'Michael', 0.09),
+             ('his', 'Michael', 0.1),
              ('his', 'role', 0.01),
              ('his', 'son', 0.01),
              ('his', 'life', 0.01),
@@ -449,7 +454,6 @@ class TestCorefEN(unittest.TestCase):
              ('his', 'nothing', 0.02),
              ('his', 'time', 0.02),
              ('his', 'Lisa', 0.02),
-             ('his', 's', 0.02),
              ('his', 'son', 0.02),
              ('his', 'Tom', 0.14),
              ('his', 'Vietnam', 0.11),

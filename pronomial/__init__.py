@@ -306,7 +306,14 @@ class PronomialCoreferenceSolver:
     def replace_corefs(cls, text, lang="en"):
         tokens = word_tokenize(text)
         for tok_id, mtok_id, score in cls.solve_corefs(text, lang=lang):
-            tokens[tok_id] = tokens[mtok_id]
+            # An antecedent held in a possessive token is substituted as the
+            # noun, not as the possessive: "John's mother loves him" resolves
+            # to "loves John", never "loves John's".
+            antecedent = tokens[mtok_id]
+            if lang.startswith("en"):
+                from pronomial.lang.en import strip_possessive_en
+                antecedent = strip_possessive_en(antecedent)
+            tokens[tok_id] = antecedent
         return " ".join(tokens)
 
     @staticmethod
