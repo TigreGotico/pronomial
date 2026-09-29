@@ -112,4 +112,4 @@ replace_above("London is old. It was founded by Romans.", threshold=0.5)
 ```
 
 ---
-[← API](api.md) · [Home](../readme.md) · [OPM plugin →](opm.md)
+[← API](api.md) · [Home](../readme.md)
