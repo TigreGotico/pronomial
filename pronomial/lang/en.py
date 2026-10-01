@@ -37,15 +37,57 @@ GENDERED_WORDS_EN = {
 }
 
 
+# nltk 3.9 renamed the English tagger resource to
+# "averaged_perceptron_tagger_eng". The old name is still a package that
+# downloads and still reports success, but it does not satisfy the lookup that
+# nltk.pos_tag makes, so a download of the old name alone never clears the
+# LookupError. The old name is kept second for nltk older than 3.9, where it is
+# the only one that exists.
+TAGGER_RESOURCES_EN = ("averaged_perceptron_tagger_eng",
+                       "averaged_perceptron_tagger")
+
+# One download attempt per process. Without this, a tagger that stays absent
+# makes every call download again, and the retry must never call back into the
+# function that started it.
+_tagger_download_done = False
+
+
+def _nltk_pos_tag_en(tokens):
+    """Tag with nltk, and download the tagger once if it is absent.
+
+    Raises LookupError when the tagger is still absent after the download,
+    which names the missing resource. It does not retry a second time.
+    """
+    global _tagger_download_done
+    try:
+        return nltk.pos_tag(tokens)
+    except LookupError:
+        if _tagger_download_done:
+            raise
+        _tagger_download_done = True
+        for resource in TAGGER_RESOURCES_EN[:-1]:
+            try:
+                nltk.download(resource)
+                return nltk.pos_tag(tokens)
+            except LookupError:
+                # This name is not the one this nltk looks for. Try the next.
+                continue
+            except Exception:
+                # An unknown resource name, or no network. The last attempt
+                # below reports the real problem.
+                break
+        try:
+            nltk.download(TAGGER_RESOURCES_EN[-1])
+        except Exception:
+            pass
+        return nltk.pos_tag(tokens)
+
+
 def pos_tag_en(tokens):
     if isinstance(tokens, str):
         tokens = word_tokenize(tokens)
 
-    try:
-        postagged = nltk.pos_tag(tokens)
-    except LookupError:
-        nltk.download("averaged_perceptron_tagger")
-        return pos_tag_en(tokens)
+    postagged = _nltk_pos_tag_en(tokens)
 
     # HACK this fixes some know failures from postag
     # this is not sustainable but important cases can be added at any time
