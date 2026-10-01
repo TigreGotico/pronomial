@@ -1,0 +1,46 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pronomial"
+version = "0.1.0"
+description = "Rule-based coreference solver driven by part-of-speech tags and word gender"
+readme = "readme.md"
+license = { text = "Apache-2.0" }
+authors = [{ name = "JarbasAi", email = "jarbasai@mailfence.com" }]
+requires-python = ">=3.10"
+keywords = ["coreference", "pronoun", "nlp", "postag", "english", "portuguese",
+            "spanish", "catalan"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: Apache Software License",
+    "Intended Audience :: Developers",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Text Processing :: Linguistic",
+]
+
+dependencies = [
+    "nltk",
+    "quebra_frases",
+]
+
+[project.optional-dependencies]
+test = ["pytest"]
+
+[project.urls]
+Homepage = "https://github.com/TigreGotico/pronomial"
+Repository = "https://github.com/TigreGotico/pronomial"
+
+# Carried over from setup.py unchanged. The group and the name are a published
+# interface: a consumer that discovers this plugin does so by this exact
+# string, so neither is renamed here.
+[project.entry-points."intentbox.coreference"]
+ovos-coref-plugin-pronomial = "pronomial.opm:PronomialCoreferenceSolver"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["pronomial*"]
+
+[tool.setuptools.package-data]
+pronomial = ["res/*"]

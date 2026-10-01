@@ -3,11 +3,45 @@ import csv
 import nltk
 import pickle
 
-from quebra_frases import word_tokenize
+from nltk.tokenize import TreebankWordTokenizer
+from quebra_frases import sentence_tokenize
+from quebra_frases import word_tokenize as _word_tokenize_default
 from pronomial.lang.pt import pos_tag_pt
 from pronomial.lang.en import pos_tag_en, is_plural_en
 from pronomial.lang.es import pos_tag_es
 from pronomial.lang.ca import pos_tag_ca
+
+
+#: The English tagger is nltk's perceptron model, trained on the Penn
+#: Treebank, so English has to be tokenized the way the Treebank is: a
+#: possessive or a contraction is its own token (``man`` + ``'s``,
+#: ``do`` + ``n't``). The default tokenizer keeps an apostrophe inside the
+#: word, which is right for Catalan ``l'ha`` and Portuguese ``d'agua`` and
+#: wrong here: with ``man's`` as one token the tagger never sees ``man``, so no
+#: pronoun can resolve to it.
+_TREEBANK = TreebankWordTokenizer()
+
+
+def _word_tokenize_en(text):
+    """Treebank tokens for English. The Treebank tokenizer splits a final
+    period only at the end of its input, so the text is split into sentences
+    first; otherwise ``friend.`` stays one token in the middle of a text."""
+    tokens = []
+    for sentence in sentence_tokenize(text):
+        tokens.extend(_TREEBANK.tokenize(sentence))
+    return tokens
+
+
+def word_tokenize(text, lang="en"):
+    """Tokens for *lang*, matching what that language's tagger was trained on.
+
+    Every caller that indexes into this list -- ``detect_nouns``,
+    ``score_corefs``, ``solve_corefs``, ``replace_corefs`` -- must pass the
+    same lang as the tagger, or the indices name different words on each side.
+    """
+    if lang.startswith("en"):
+        return _word_tokenize_en(text)
+    return _word_tokenize_default(text)
 
 
 def pos_tag(text, lang="en"):
