@@ -31,7 +31,7 @@ GENDERED_WORDS_PT = {
 
 # context rules for gender
 MALE_DETERMINANTS_PT = ["o", "os", "este", "estes", "esse", "esses"]
-FEMALE_DETERMINANTS_PT = ["a", "as", "estas", "estas", "essa", "essas"]
+FEMALE_DETERMINANTS_PT = ["a", "as", "esta", "estas", "essa", "essas"]
 
 
 def train_pt_tagger(path):
@@ -202,7 +202,7 @@ def predict_gender_pt(word, text=""):
     singular = word.rstrip("s")
     if singular in GENDERED_WORDS_PT["male"]:
         return "male"
-    if singular in GENDERED_WORDS_PT["male"]:
+    if singular in GENDERED_WORDS_PT["female"]:
         return "female"
     # in portuguese the last vowel usually defines the gender of a word
     # the gender of the determinant takes precedence over this rule
